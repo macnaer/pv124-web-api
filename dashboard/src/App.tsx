@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "./containers";
-import DefaultPage from "./pages/users/defaultPage";
+import DefaultPage from "./pages/defaultPage";
 import Users from "./pages/users";
 
 const App: React.FC = () => {
