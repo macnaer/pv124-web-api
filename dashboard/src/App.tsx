@@ -4,8 +4,8 @@ import DashboardLayout from "./containers";
 import DefaultPage from "./pages/defaultPage";
 import Users from "./pages/users";
 import NotFound from "./pages/notFound";
-import SignIn from "./pages/singIn";
-import SignUp from "./pages/signUp";
+import SignIn from "./pages/auth/singIn";
+import SignUp from "./pages/auth/signUp";
 
 const App: React.FC = () => {
   return (
