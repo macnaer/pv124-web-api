@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Compass.Core.AutoMapper;
+using Compass.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +11,14 @@ namespace Compass.Core
 {
     public static class ServiceExtensions
     {
+        public static void AddCoreServices(this IServiceCollection services)
+        {
+            services.AddTransient<UserService>();
+        }
+
+        public static void AddAutoMapper(this IServiceCollection services)
+        {
+            services.AddAutoMapper(typeof(AutoMapperUserProfile));
+        }
     }
 }
