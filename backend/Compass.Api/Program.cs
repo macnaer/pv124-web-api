@@ -31,6 +31,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(options => options.SetIsOriginAllowed(origin => true)
+.AllowAnyHeader()
+.AllowAnyMethod()
+.AllowCredentials());
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

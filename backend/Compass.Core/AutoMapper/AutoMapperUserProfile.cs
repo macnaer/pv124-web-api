@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Compass.Core.DTO_s;
+using Compass.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,8 @@ namespace Compass.Core.AutoMapper
     {
         public AutoMapperUserProfile()
         {
-            
+            CreateMap<AppUser, ResiterUserDto>();
+            CreateMap<ResiterUserDto, AppUser>().ForMember(dst => dst.UserName, act => act.MapFrom(src => src.Email));
         }
     }
 }
