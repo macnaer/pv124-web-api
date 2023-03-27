@@ -27,6 +27,5 @@ export async function Incert(user: any) {
     .catch((error) => {
       return error.response;
     });
-  console.log("In service ", data);
   return data;
 }

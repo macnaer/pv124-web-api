@@ -20,12 +20,14 @@ import { Navigate } from "react-router-dom";
 
 const Register: React.FC = () => {
   const [role, setRole] = useState("Users");
-  // const { message } = useTypedSelector((store) => store.UserReducer);
+  const { message } = useTypedSelector((store) => store.UserReducer);
   const { IncertUser } = useActions();
 
-  // if (message === "User successfully created.") {
-  //   return <Navigate to="/dashboard/users" />;
-  // }
+  console.log("message ", message);
+
+  if (message === "User successfully created.") {
+    return <Navigate to="/" />;
+  }
 
   const initialValues = {
     email: "",
@@ -47,7 +49,6 @@ const Register: React.FC = () => {
       Password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
     };
-
     IncertUser(newUser);
   };
 

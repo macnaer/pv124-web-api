@@ -9,12 +9,16 @@ export const IncertUser = (user: any) => {
       dispatch({ type: UserActionType.START_REQUEST });
       const data = await Incert(user);
       const { response } = data;
-      console.log("response ", response);
+
       if (response.success) {
         toast.success(response.message);
       } else {
         toast.error(response.message);
       }
+      dispatch({
+        type: UserActionType.FINISH_REQUEST,
+        payload: response.message,
+      });
     } catch {}
   };
 };
