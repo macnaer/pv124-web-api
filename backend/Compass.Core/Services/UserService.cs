@@ -39,7 +39,7 @@ namespace Compass.Core.Services
 
                 return new ServiceResponse
                 {
-                    Success = true,
+                    Success = false,
                     Message = result.Errors.Select(e => e.Description).FirstOrDefault()
                 };
             }

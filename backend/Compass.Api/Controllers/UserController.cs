@@ -24,11 +24,7 @@ namespace Compass.Api.Controllers
             if(validatinResult.IsValid)
             {
                 var result = await _userService.IncertAsync(model);
-                if (result.Success)
-                {
-                    return Ok(result.Message);
-                }
-                return BadRequest(result.Errors);
+                return Ok(result);
             }
             return BadRequest(validatinResult.Errors);
         }

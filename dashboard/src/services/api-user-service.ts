@@ -7,7 +7,7 @@ const instance = axios.create({
   },
 });
 
-const responseBody: any = (response: any) => responseBody.data;
+const responseBody: any = (response: any) => response.data;
 
 const request = {
   get: (url: string) => instance.get(url).then().then(responseBody),
@@ -27,5 +27,6 @@ export async function Incert(user: any) {
     .catch((error) => {
       return error.response;
     });
+  console.log("In service ", data);
   return data;
 }
