@@ -14,6 +14,9 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Field, Formik } from "formik";
 import { LoginSchema } from "../validation";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
+import { useActions } from "../../../hooks/useActions";
+import { Navigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
@@ -38,13 +41,21 @@ const initialValues = { email: "", password: "" };
 const theme = createTheme();
 
 export default function SignIn() {
+  const { message } = useTypedSelector((store) => store.UserReducer);
+  const { LoginUser } = useActions();
+
+  if (message === "User logged in successfully.") {
+    return <Navigate to="/dashboard" />;
+  }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const newUser = {
+      Email: data.get("email"),
+      Password: data.get("password"),
+    };
+    LoginUser(newUser);
   };
 
   return (

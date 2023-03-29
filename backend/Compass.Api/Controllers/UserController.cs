@@ -28,5 +28,19 @@ namespace Compass.Api.Controllers
             }
             return BadRequest(validatinResult.Errors);
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginUserDto model)
+        {
+            var validator = new LoginUserValidation();
+            var validatinResult = await validator.ValidateAsync(model);
+            if (validatinResult.IsValid)
+            {
+                var result = await _userService.LoginAsync(model);
+                return Ok(result);
+            }
+            return BadRequest(validatinResult.Errors);
+
+        }
     }
 }

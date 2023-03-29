@@ -13,12 +13,15 @@ namespace Compass.Core.Services
     public class UserService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IMapper _mapper;
 
-        public UserService(UserManager<AppUser> userManager, IMapper mapper)
+        public UserService(UserManager<AppUser> userManager, IMapper mapper, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _signInManager = signInManager;
+
         }
         public async Task<ServiceResponse> IncertAsync(ResiterUserDto model)
         {
@@ -41,6 +44,53 @@ namespace Compass.Core.Services
                 {
                     Success = false,
                     Message = result.Errors.Select(e => e.Description).FirstOrDefault()
+                };
+            }
+        }
+
+        public async Task<ServiceResponse> LoginAsync(LoginUserDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if(user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "Login or password incorrect."
+                };
+            }
+
+            var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
+            if(signInResult.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "User logged in successfully."
+                };
+            }
+            else if (signInResult.IsNotAllowed)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "Confirm your email."
+                };
+            }
+            else if (signInResult.IsLockedOut)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "User is blocked."
+                };
+            }
+            else
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "Login or password incorrect."
                 };
             }
         }

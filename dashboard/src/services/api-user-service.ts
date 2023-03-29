@@ -17,10 +17,22 @@ const request = {
 
 const User = {
   Incert: (user: any) => request.post("/register", user),
+  Login: (user: any) => request.post("/login", user),
 };
 
 export async function Incert(user: any) {
   const data = await User.Incert(user)
+    .then((response) => {
+      return { response };
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  return data;
+}
+
+export async function Login(user: any) {
+  const data = await User.Login(user)
     .then((response) => {
       return { response };
     })
