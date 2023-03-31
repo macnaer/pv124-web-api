@@ -13,15 +13,16 @@ namespace Compass.Core.Services
     public class UserService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly JwtService _jwtService;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IMapper _mapper;
 
-        public UserService(UserManager<AppUser> userManager, IMapper mapper, SignInManager<AppUser> signInManager)
+        public UserService(JwtService jwtService, UserManager<AppUser> userManager, IMapper mapper, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _mapper = mapper;
             _signInManager = signInManager;
-
+            _jwtService = jwtService;
         }
         public async Task<ServiceResponse> IncertAsync(ResiterUserDto model)
         {
@@ -63,8 +64,13 @@ namespace Compass.Core.Services
             var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
             if(signInResult.Succeeded)
             {
+
+                var tokens = await _jwtService.GenerateJwtTokenAsync(user);
+
                 return new ServiceResponse
                 {
+                    AccessToken = tokens.token,
+                    RefreshToken = tokens.refreshToken.Token,
                     Success = true,
                     Message = "User logged in successfully."
                 };

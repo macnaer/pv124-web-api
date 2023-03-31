@@ -13,7 +13,7 @@ namespace Compass.Infrastructure.Context
     {
         public AppDbContext() : base() { }
         public AppDbContext(DbContextOptions options) : base(options) { }
-
         public DbSet<AppUser> AppUser { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

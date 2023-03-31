@@ -1,5 +1,7 @@
 ﻿using Compass.Core.Entities;
+using Compass.Core.Interfaces;
 using Compass.Infrastructure.Context;
+using Compass.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +38,13 @@ namespace Compass.Infrastructure
             })
                         .AddEntityFrameworkStores<AppDbContext>()
                         .AddDefaultTokenProviders();
+        }
+
+
+        // Add repository
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
     }
 }
