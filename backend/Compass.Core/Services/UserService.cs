@@ -100,5 +100,10 @@ namespace Compass.Core.Services
                 };
             }
         }
+
+        public async Task<ServiceResponse> RefreshTokenAsync(TokenRequestDto model)
+        {
+            return await _jwtService.VerifyTokenAsync(model);
+        }
     }
 }
