@@ -4,6 +4,9 @@ const initialState: UserState = {
   allUsers: [],
   loading: false,
   message: "",
+  isAuth: false,
+  user: {},
+  selectedUser: null,
 };
 const UserReducer = (state = initialState, action: UserActions): UserState => {
   console.log("UserReducer", action);
@@ -14,6 +17,14 @@ const UserReducer = (state = initialState, action: UserActions): UserState => {
       return { ...state, loading: false, allUsers: action.payload };
     case UserActionType.FINISH_REQUEST:
       return { ...state, loading: false, message: action.payload };
+    case UserActionType.LOGIN_USER_SUCCESS:
+      return {
+        ...state,
+        isAuth: true,
+        loading: false,
+        user: action.payload.decodedToken,
+        message: action.payload.message,
+      };
     default:
       return state;
   }
