@@ -101,6 +101,30 @@ namespace Compass.Core.Services
             }
         }
 
+        public async Task<ServiceResponse> LogoutAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "User not found."
+                };
+            }
+            IEnumerable<RefreshToken> tokens = await _jwtService.GetAll();
+            foreach (RefreshToken token in tokens)
+            {
+                await _jwtService.Delete(token);
+            }
+
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "User successfully logged out."
+            };
+        }
+
         public async Task<ServiceResponse> RefreshTokenAsync(TokenRequestDto model)
         {
             return await _jwtService.VerifyTokenAsync(model);

@@ -108,6 +108,7 @@ const request = {
 const User = {
   Incert: (user: any) => request.post("/register", user),
   Login: (user: any) => request.post("/login", user),
+  Logout: (id: string) => request.get("/logout?userId=" + id),
 };
 
 export async function Incert(user: any) {
@@ -123,6 +124,17 @@ export async function Incert(user: any) {
 
 export async function Login(user: any) {
   const data = await User.Login(user)
+    .then((response) => {
+      return { response };
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  return data;
+}
+
+export async function Logout(id: string) {
+  const data = await User.Logout(id)
     .then((response) => {
       return { response };
     })

@@ -25,6 +25,15 @@ const UserReducer = (state = initialState, action: UserActions): UserState => {
         user: action.payload.decodedToken,
         message: action.payload.message,
       };
+    case UserActionType.LOGOUT_USER:
+      return {
+        allUsers: [],
+        loading: false,
+        message: "",
+        isAuth: false,
+        user: {},
+        selectedUser: null,
+      };
     default:
       return state;
   }

@@ -25,7 +25,7 @@ namespace Compass.Api.Controllers
         {
             var validator = new RegisterUserValidation();
             var validatinResult = await validator.ValidateAsync(model);
-            if(validatinResult.IsValid)
+            if (validatinResult.IsValid)
             {
                 var result = await _userService.IncertAsync(model);
                 return Ok(result);
@@ -45,6 +45,17 @@ namespace Compass.Api.Controllers
                 return Ok(result);
             }
             return BadRequest(validatinResult.Errors);
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> LogoutAsync(string userId)
+        {
+            var result = await _userService.LogoutAsync(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [AllowAnonymous]

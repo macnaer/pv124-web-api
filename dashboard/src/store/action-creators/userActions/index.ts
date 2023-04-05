@@ -3,6 +3,7 @@ import { UserActionType, UserActions } from "../../reducers/userReducers/types";
 import {
   Incert,
   Login,
+  Logout,
   removeTokens,
   setAccessToken,
   setRefreshToken,
@@ -45,6 +46,29 @@ export const LoginUser = (user: any) => {
         setRefreshToken(refreshToken);
         toast.success(response.message);
         AuthUser(accessToken, response.message, dispatch);
+      } else {
+        toast.error(response.message);
+      }
+      dispatch({
+        type: UserActionType.FINISH_REQUEST,
+        payload: response.message,
+      });
+    } catch {}
+  };
+};
+
+export const LogOut = (id: string) => {
+  return async (dispatch: Dispatch<UserActions>) => {
+    try {
+      dispatch({ type: UserActionType.START_REQUEST });
+      const data = await Logout(id);
+      const { response } = data;
+      if (response.success) {
+        removeTokens();
+        toast.success(response.message);
+        dispatch({
+          type: UserActionType.LOGOUT_USER,
+        });
       } else {
         toast.error(response.message);
       }
