@@ -2,6 +2,7 @@
 using Compass.Core.DTO_s;
 using Compass.Core.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,26 @@ namespace Compass.Core.Services
             _signInManager = signInManager;
             _jwtService = jwtService;
         }
+
+        public async Task<ServiceResponse> GetAllUsers()
+        {
+            List<AppUser> users = await _userManager.Users.ToListAsync();
+            List<AllUsersDto> mappedUsers = users.Select(u => _mapper.Map<AppUser, AllUsersDto>(u)).ToList();
+
+            for (int i = 0; i < users.Count; i++)
+            {
+                mappedUsers[i].Role = (await _userManager.GetRolesAsync(users[i])).FirstOrDefault();
+            }
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "All users loaded",
+                Payload = mappedUsers
+            };
+
+        }
+
+
         public async Task<ServiceResponse> IncertAsync(ResiterUserDto model)
         {
             var mappedUser = _mapper.Map<AppUser>(model);

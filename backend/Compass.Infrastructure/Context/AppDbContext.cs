@@ -1,5 +1,6 @@
 ﻿using Compass.Core.Entities;
 using Compass.Infrastructure.Configurations;
+using Compass.Infrastructure.Initializers;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,11 +19,17 @@ namespace Compass.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.SeedCategories();
+            builder.SeedCourses();
+
             builder.ApplyConfiguration(new CategoryConfiguration());
+            builder.ApplyConfiguration(new CourseConfiguration());
         }
 
         public DbSet<AppUser> AppUser { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<Course> Courses { get; set; }
     }
 }

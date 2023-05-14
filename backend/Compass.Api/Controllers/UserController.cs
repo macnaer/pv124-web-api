@@ -20,6 +20,12 @@ namespace Compass.Api.Controllers
             _userService = userService;
         }
 
+        [HttpGet("users")]
+        public async Task<IActionResult> AllUsers()
+        {
+            return Ok(await _userService.GetAllUsers());
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> IncertAsync([FromBody] ResiterUserDto model)
         {
