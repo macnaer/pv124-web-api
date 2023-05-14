@@ -9,7 +9,6 @@ const initialState: UserState = {
   selectedUser: null,
 };
 const UserReducer = (state = initialState, action: UserActions): UserState => {
-  console.log("UserReducer", action);
   switch (action.type) {
     case UserActionType.START_REQUEST:
       return { ...state, loading: true };

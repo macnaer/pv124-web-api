@@ -1,6 +1,6 @@
 import { useTypedSelector } from "../../hooks/useTypedSelector";
 import { alpha } from "@mui/material/styles";
-import React from "react";
+import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -19,21 +19,20 @@ import Tooltip from "@mui/material/Tooltip";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
+import { useActions } from "../../hooks/useActions";
+import { Button, Link } from "@mui/material";
+import { Navigate, useNavigate } from "react-router-dom";
 
 interface Data {
   id: number;
   name: string;
   surname: string;
-}
-
-function createData(id: number, name: string, surname: string): Data {
-  return {
-    id,
-    name,
-    surname,
-  };
+  email: string;
+  phoneNumber: string;
+  role: string;
+  action: string;
+  isBlocked: string;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -83,12 +82,12 @@ interface HeadCell {
 }
 
 const headCells: readonly HeadCell[] = [
-  {
-    id: "id",
-    numeric: false,
-    disablePadding: true,
-    label: "Id",
-  },
+  // {
+  //   id: "id",
+  //   numeric: false,
+  //   disablePadding: true,
+  //   label: "Id",
+  // },
   {
     id: "name",
     numeric: true,
@@ -100,6 +99,24 @@ const headCells: readonly HeadCell[] = [
     numeric: true,
     disablePadding: false,
     label: "Surname",
+  },
+  {
+    id: "email",
+    numeric: true,
+    disablePadding: false,
+    label: "Email",
+  },
+  {
+    id: "phoneNumber",
+    numeric: true,
+    disablePadding: false,
+    label: "Phone number",
+  },
+  {
+    id: "role",
+    numeric: true,
+    disablePadding: false,
+    label: "Role",
   },
 ];
 
@@ -113,6 +130,7 @@ interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
+  user: any;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
@@ -122,6 +140,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     orderBy,
     numSelected,
     rowCount,
+    user,
     onRequestSort,
   } = props;
   const createSortHandler =
@@ -138,15 +157,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
           />
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
+            align={headCell.numeric ? "left" : "left"}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -164,6 +180,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             </TableSortLabel>
           </TableCell>
         ))}
+        {user.role === "Administrators" && (
+          <TableCell key={"isBlocked"}>Is Blocked</TableCell>
+        )}
+        {user.role === "Administrators" && (
+          <TableCell key={"action"}>Action</TableCell>
+        )}
       </TableRow>
     </TableHead>
   );
@@ -171,6 +193,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  user: any;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
@@ -181,6 +204,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
+        display: "flex",
+        justifyContent: "space-around",
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
             alpha(
@@ -200,27 +225,9 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Nutrition
+        <Typography sx={{ mt: 3 }} variant="h4" id="tableTitle" component="div">
+          Users
         </Typography>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
       )}
     </Toolbar>
   );
@@ -234,7 +241,13 @@ const Users: React.FC = () => {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const { allUsers } = useTypedSelector((store) => store.UserReducer);
+  const { allUsers } = useTypedSelector((state) => state.UserReducer);
+  const { user } = useTypedSelector((state) => state.UserReducer);
+
+  const { GetAllUsers } = useActions();
+  useEffect(() => {
+    GetAllUsers();
+  }, []);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -291,15 +304,34 @@ const Users: React.FC = () => {
 
   const isSelected = (name: any) => selected.indexOf(name) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - allUsers.length) : 0;
 
+  const navigate = useNavigate();
+
+  const onEditClick = (event: React.MouseEvent<unknown>, row: any) => {
+    window.localStorage.setItem("selectedUser", JSON.stringify(row));
+    navigate("updateUser");
+  };
+
+  const onAddClick = (event: React.MouseEvent<unknown>) => {
+    console.log("add");
+    navigate("/dashboard/signUp");
+  };
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} user={user} />
         <TableContainer>
+          {user.role === "Administrators" && (
+            <Button
+              onClick={onAddClick}
+              variant="contained"
+              sx={{ width: "98%", m: "auto", display: "flex", mt: 4, mb: 3 }}
+            >
+              Add new user
+            </Button>
+          )}
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
@@ -312,6 +344,7 @@ const Users: React.FC = () => {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={allUsers.length}
+              user={user}
             />
             <TableBody>
               {stableSort(allUsers, getComparator(order, orderBy))
@@ -339,16 +372,26 @@ const Users: React.FC = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                      >
-                        {row.id}
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">{row.surname}</TableCell>
+                      <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">{row.phoneNumber}</TableCell>
+                      <TableCell align="left">{row.role}</TableCell>
+                      {user.role === "Administrators" && (
+                        <TableCell align="left">
+                          {row.isBlocked ? "Yes" : "No"}
+                        </TableCell>
+                      )}
+                      <TableCell align="left">
+                        {user.role === "Administrators" && (
+                          <Button
+                            onClick={(event) => onEditClick(event, row)}
+                            variant="outlined"
+                          >
+                            Edit
+                          </Button>
+                        )}
                       </TableCell>
-                      <TableCell align="right">{row.name}</TableCell>
-                      <TableCell align="right">{row.surname}</TableCell>
                     </TableRow>
                   );
                 })}

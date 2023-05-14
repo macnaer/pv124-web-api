@@ -109,6 +109,7 @@ const User = {
   Incert: (user: any) => request.post("/register", user),
   Login: (user: any) => request.post("/login", user),
   Logout: (id: string) => request.get("/logout?userId=" + id),
+  GetAll: () => request.get("/users"),
 };
 
 export async function Incert(user: any) {
@@ -141,5 +142,17 @@ export async function Logout(id: string) {
     .catch((error) => {
       return error.response;
     });
+  return data;
+}
+
+export async function GetAll() {
+  const data = await User.GetAll()
+    .then((response) => {
+      return { response };
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  console.log("In service ", data);
   return data;
 }

@@ -23,8 +23,6 @@ const Register: React.FC = () => {
   const { message } = useTypedSelector((store) => store.UserReducer);
   const { IncertUser } = useActions();
 
-  console.log("message ", message);
-
   if (message === "User successfully created.") {
     return <Navigate to="/" />;
   }

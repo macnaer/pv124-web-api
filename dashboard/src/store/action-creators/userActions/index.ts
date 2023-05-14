@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
 import { UserActionType, UserActions } from "../../reducers/userReducers/types";
 import {
+  GetAll,
   Incert,
   Login,
   Logout,
@@ -37,7 +38,6 @@ export const LoginUser = (user: any) => {
       dispatch({ type: UserActionType.START_REQUEST });
       const data = await Login(user);
       const { response } = data;
-      console.log("response ", response);
 
       if (response.success) {
         const { accessToken, refreshToken, message } = response;
@@ -75,6 +75,26 @@ export const LogOut = (id: string) => {
       dispatch({
         type: UserActionType.FINISH_REQUEST,
         payload: response.message,
+      });
+    } catch {}
+  };
+};
+
+export const GetAllUsers = () => {
+  return async (dispatch: Dispatch<UserActions>) => {
+    try {
+      dispatch({ type: UserActionType.START_REQUEST });
+      const data = await GetAll();
+      const { response } = data;
+      console.log("response ", response);
+      if (response.success) {
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+      dispatch({
+        type: UserActionType.ALL_USERS_LOADED,
+        payload: response.payload,
       });
     } catch {}
   };
