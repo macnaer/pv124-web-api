@@ -22,6 +22,7 @@ namespace Compass.Core
 
             // Category service
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<ICourseService, CourseService>();
         }
 
         // Add automapper
@@ -29,6 +30,7 @@ namespace Compass.Core
         {
             services.AddAutoMapper(typeof(AutoMapperUserProfile));
             services.AddAutoMapper(typeof(AutoMapperCategoryAndProductProfile));
+            services.AddAutoMapper(typeof(AutoMapperCourseProfile));
         }
     }
 }

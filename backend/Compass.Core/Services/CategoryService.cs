@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Compass.Core.DTO_s;
 using Compass.Core.Entities;
 using Compass.Core.Interfaces;
 using System;
@@ -18,10 +19,10 @@ namespace Compass.Core.Services
             _categoryRepo = categoryRepo;
             _mapper = mapper;
         }
-        public async Task<List<Category>> GetAll()
+        public async Task<List<CategoryDto>> GetAll()
         {
             var result = await _categoryRepo.GetAll();
-            return _mapper.Map<List<Category>>(result);
+            return _mapper.Map<List<CategoryDto>>(result);
         }
     }
 }
