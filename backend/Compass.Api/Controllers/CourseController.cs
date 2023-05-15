@@ -19,6 +19,7 @@ namespace Compass.Api.Controllers
             _coursesService = coursesService;
         }
 
+        [AllowAnonymous]
         [HttpGet("courses")]
         public async Task<IActionResult> Index()
         {   
