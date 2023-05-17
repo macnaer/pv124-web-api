@@ -1,6 +1,8 @@
 ﻿using Compass.Core.DTO_s;
 using Compass.Core.Interfaces;
 using Compass.Core.Services;
+using Compass.Core.Validation.Course;
+using Compass.Core.Validation.Token;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,31 +18,53 @@ namespace Compass.Api.Controllers
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _coursesService;
-        public CourseController(ICourseService coursesService)
+        private readonly UserService _userService;
+        public CourseController(ICourseService coursesService, UserService userService)
         {
             _coursesService = coursesService;
+            _userService = userService;
         }
 
         [AllowAnonymous]
         [HttpGet("courses")]
         public async Task<IActionResult> Index()
-        {   
-            return Ok(await _coursesService.GetAll());
+        {
+            var result = await _coursesService.GetAll();
+            return Ok(result);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(CourseDto model)
         {
-            //var validator = new AddCourseValidation();
-            //var validationResult = await validator.ValidateAsync(model);
-            //if (validationResult.IsValid)
-            //{
-
+            var validator = new AddCourseValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
                 await _coursesService.Create(model);
-                return RedirectToAction("Index", "Dashboard");
-            //}
-            return Ok();
+                return Ok("Created.");
+            }
+            return BadRequest(validationResult.Errors);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequestDto model)
+        {
+            var validator = new TokenRequestValidation();
+            var validatinResult = await validator.ValidateAsync(model);
+            if (validatinResult.IsValid)
+            {
+                var result = await _userService.RefreshTokenAsync(model);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            else
+            {
+                return BadRequest(validatinResult.Errors);
+            }
         }
     }
 

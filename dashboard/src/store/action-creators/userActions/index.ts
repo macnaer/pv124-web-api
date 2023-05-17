@@ -86,16 +86,14 @@ export const GetAllUsers = () => {
       dispatch({ type: UserActionType.START_REQUEST });
       const data = await GetAll();
       const { response } = data;
-      console.log("response ", response);
       if (response.success) {
-        toast.success(response.message);
+        dispatch({
+          type: UserActionType.ALL_USERS_LOADED,
+          payload: response.payload,
+        });
       } else {
         toast.error(response.message);
       }
-      dispatch({
-        type: UserActionType.ALL_USERS_LOADED,
-        payload: response.payload,
-      });
     } catch {}
   };
 };

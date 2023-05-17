@@ -39,10 +39,16 @@ namespace Compass.Core.Services
             }
         }
 
-        public async Task<List<CourseDto>> GetAll()
+        public async Task<ServiceResponse> GetAll()
         {
             var result = await _courseRepo.GetListBySpec(new Courses.GetAll());
-            return _mapper.Map<List<CourseDto>>(result);
+            var data = _mapper.Map<List<CourseDto>>(result);
+            return new ServiceResponse
+            {
+                Message = "All courses loaded.",
+                Success = true,
+                Payload = data
+            };
         }
 
         public async Task<CourseDto?> Get(int id)

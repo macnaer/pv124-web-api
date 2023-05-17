@@ -6,6 +6,7 @@ import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import DynamicFormIcon from "@mui/icons-material/DynamicForm";
 
 export const adminMenu = (
   <React.Fragment>
@@ -27,6 +28,14 @@ export const adminMenu = (
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
+        <DynamicFormIcon />
+      </ListItemIcon>
+      <Link to="courses">
+        <ListItemText primary="Courses" />
+      </Link>
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
       <ListItemText primary="Reports" />
@@ -42,6 +51,14 @@ export const userMenu = (
       </ListItemIcon>
       <Link to="">
         <ListItemText primary="Dashboard" />
+      </Link>
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemIcon>
+        <DynamicFormIcon />
+      </ListItemIcon>
+      <Link to="courses">
+        <ListItemText primary="Courses" />
       </Link>
     </ListItemButton>
   </React.Fragment>
