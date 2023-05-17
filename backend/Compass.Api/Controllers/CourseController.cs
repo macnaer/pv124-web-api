@@ -1,10 +1,12 @@
-﻿using Compass.Core.Interfaces;
+﻿using Compass.Core.DTO_s;
+using Compass.Core.Interfaces;
 using Compass.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Compass.Api.Controllers
 {
@@ -25,5 +27,21 @@ namespace Compass.Api.Controllers
         {   
             return Ok(await _coursesService.GetAll());
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CourseDto model)
+        {
+            //var validator = new AddCourseValidation();
+            //var validationResult = await validator.ValidateAsync(model);
+            //if (validationResult.IsValid)
+            //{
+
+                await _coursesService.Create(model);
+                return RedirectToAction("Index", "Dashboard");
+            //}
+            return Ok();
+        }
     }
+
 }
